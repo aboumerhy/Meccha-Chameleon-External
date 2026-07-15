@@ -47,21 +47,36 @@ def w2s(world_pos, camera, screen_w, screen_h):
     cam_loc = camera["loc"]
     cam_rot = camera["rot"]
     fov = camera["fov"]
+    
+    # 1. Get camera orientation vectors
     forward, right, up = rotation_to_axes(cam_rot)
+    
+    # 2. Translate world position relative to camera location
     dx = world_pos[0] - cam_loc[0]
     dy = world_pos[1] - cam_loc[1]
     dz = world_pos[2] - cam_loc[2]
-    view_x = dx * forward[0] + dy * forward[1] + dz * forward[2]
-    view_y = dx * right[0] + dy * right[1] + dz * right[2]
-    view_z = dx * up[0] + dy * up[1] + dz * up[2]
+    
+    # 3. Transform to camera space (dot products)
+    view_x = dx * forward[0] + dy * forward[1] + dz * forward[2] # Depth
+    view_y = dx * right[0] + dy * right[1] + dz * right[2]     # Horizontal
+    view_z = dx * up[0] + dy * up[1] + dz * up[2]        # Vertical
+    
+    # Near plane clipping check
     if view_x <= 0.1:
         return None
+        
+    # 4. Calculate Normalized Device Coordinates (NDC)
     aspect = screen_w / screen_h
     tan_hfov = math.tan(math.radians(fov) / 2.0)
+    
+    # FIXED: Multiply view_z by aspect ratio instead of dividing the denominator
     ndc_x = view_y / (view_x * tan_hfov)
-    ndc_y = view_z / (view_x * tan_hfov / aspect)
+    ndc_y = (view_z * aspect) / (view_x * tan_hfov)
+    
+    # 5. Map NDC (-1 to 1) to Screen Space (Pixels)
     screen_x = (1.0 + ndc_x) * screen_w / 2.0
-    screen_y = (1.0 - ndc_y) * screen_h / 2.0
+    screen_y = (1.0 - ndc_y) * screen_h / 2.0 # Inverted because screen Y goes down
+    
     return (screen_x, screen_y)
 
 
