@@ -112,11 +112,11 @@ class Config:
     camouflage_status: str = "Ready"
     # Paint mode: Single / Packed / Fast
     paint_mode: str = "Packed"
-    paint_speed: float = 5.0
+    paint_speed: float = 1000.0
     # Paint geometry settings
-    stroke_size_texels: float = 9.0
-    coverage_step_texels: float = 9.0
-    stroke_delay_ms: int = 100
+    stroke_size_texels: float = 3.0
+    coverage_step_texels: float = 3.0
+    stroke_delay_ms: int = 1
     side_source_max_uv: float = 0.08
     front_back_source_max_uv: float = 0.45
     server_batch_limit: int = 50
@@ -127,7 +127,7 @@ class Config:
     metallic: float = 0.0
     roughness: float = 1.0
     # Region modes
-    front_region_mode: str = "fill"
+    front_region_mode: str = "paint"
     side_region_mode: str = "paint"
     back_region_mode: str = "paint"
     # Fill
